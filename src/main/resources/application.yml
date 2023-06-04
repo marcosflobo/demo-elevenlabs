@@ -1,0 +1,7 @@
+micronaut:
+  application:
+    name: demoEleventlabs
+netty:
+  default:
+    allocator:
+      max-order: 3
