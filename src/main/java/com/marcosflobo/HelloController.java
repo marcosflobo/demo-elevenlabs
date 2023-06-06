@@ -6,6 +6,10 @@ import io.micronaut.http.annotation.Get;
 import lombok.extern.slf4j.Slf4j;
 import io.micronaut.core.io.scan.ClassPathResourceLoader;
 import io.micronaut.core.io.ResourceResolver;
+
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Optional;
 import java.util.Scanner;
 import java.net.URL;
@@ -16,6 +20,8 @@ import java.net.URL;
 class HelloController {
 
     private final ElevenlabsAPIClient elevenlabsAPIClient;
+
+    private String outputFileName = "run1.mp3";
 
     public HelloController(ElevenlabsAPIClient elevenlabsAPIClient) {
 
@@ -44,12 +50,11 @@ class HelloController {
     public HttpResponse<String> textToSpeech() {
 
         String text = "10 years ago, I started to be more active in the Tech Events thing. Some of the biggest events I had the opportunity to attend were OpenStack Summit 2015, DockerCon Europe 2018 (2.200 attendees), and KubeCon Europe 2019 (7.700 attendees).";
-        //text = "If you are interested in the most technical part of this, I wrote down an article in my blog, on which toy can read about how to set up the usage of the API and a small project for using it. Are you using any Text-To-Speech AI in your services? What was your experience? Looking forward to reading your comments!";
-        text = readLongText();
-        text = "hello";
+        //text = "If you are interested in the most technical part of this, I wrote down an article in my blog, on which you can read about how to set up the usage of the API and a small project for using it. Are you using any Text-To-Speech AI in your services? What was your experience? Looking forward to reading your comments!";
+        //text = readLongText();
         String request = "{" +
             "\"text\": \"" + text + "\"," +
-            "\"model_id\": \"eleven_monolingual_v1\"," +
+            "\"model_id\": \"eleven_multilingual_v1\"," +
             "\"voice_settings\": {" +
               "\"stability\": 0.5," +
               "\"similarity_boost\": 0.5" +
@@ -57,10 +62,24 @@ class HelloController {
           "}";
         log.info("Calling ElevenLabs API...");
         long start = System.currentTimeMillis();
-        String response = elevenlabsAPIClient.getTextToSpeech(request);
+        byte[] audioResponse = elevenlabsAPIClient.getTextToSpeech(request);
         long stop = System.currentTimeMillis();
         log.info("Calling /v1/text-to-speech/ with a '{}' bytes size took '{}' milliseconds", text.length(), (stop - start));
-        return HttpResponse.ok(response);
+        log.info("Saving mpeg file...");
+        saveMpegBytes(audioResponse);
+        log.info("File '{}' saved!", outputFileName);
+        return HttpResponse.ok();
+    }
+
+    private void saveMpegBytes(byte[] audio) {
+
+        try (FileOutputStream fos = new FileOutputStream(outputFileName)) {
+            fos.write(audio);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**

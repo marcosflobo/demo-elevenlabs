@@ -22,6 +22,6 @@ public interface ElevenlabsAPIClient {
   String getUser();
 
   @Post("/v1/text-to-speech/21m00Tcm4TlvDq8ikWAM")
-  String getTextToSpeech(@Body String request);
+  byte[] getTextToSpeech(@Body String request);
 
 }

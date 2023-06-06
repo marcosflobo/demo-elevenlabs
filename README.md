@@ -1,10 +1,18 @@
 # demo-elevenlabs
 This is a demo of the ElevenLabs API https://docs.elevenlabs.io/api-reference/quick-start/introduction
 
+## Configure the demo
+Before running the demo, you have to add your API. For that
+1. create an account on https://beta.elevenlabs.io/
+2. Click on your icon to see the contextual menu
+3. Click on `Profile`
+4. Copy the value from the `API Key` text box
+5. Go to `ElevenlabsAPIClient.java` and set that value on as the value for the header `xi-api-key` in line 11
+
 ## Choose a text to use
 If you want to change the text that the ElevenLabs API will process, just go to the `HelloController.java` file and in the `textToSpeech` method you will find a var call `text`. Modify it to set the text you want.
 
-You will see down that line that you can uncomment the assigment of `text` var from the `text-long.txt` file for wider tests.
+You will see down that line that you can uncomment the assignment of `text` var from the `text-long.txt` file for wider tests.
 
 ## Run
 ```shell
